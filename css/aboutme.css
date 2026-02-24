@@ -28,16 +28,3 @@ p{ margin: 10px 0; }
   padding: 14px;
   margin-top: 12px;
 }
-
-/* Top site header */
-.site-top{
-  background: transparent;
-  padding: 12px 0;
-  text-align: center;
-}
-.site-name{
-  margin: 0;
-  font-size: 28px;
-  letter-spacing: 0.4px;
-}
-
