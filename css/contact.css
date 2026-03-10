@@ -1,24 +1,26 @@
 body {
     font-family: Arial, Helvetica, sans-serif;
-    background-color: #f5f5f5;
+    background-color: orangered;
     margin: 0;
 }
 
 .container {
     width: 400px;
     margin: 80px auto;
-    background: white;
+    background: rgb(75, 184, 224);
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 h1 {
+    color: #032d4b;
     text-align: center;
     margin-bottom: 25px;
 }
 
 label {
+    color: #032d4b;
     display: block;
     margin-top: 15px;
     margin-bottom: 5px;
@@ -48,5 +50,5 @@ button {
 }
 
 button:hover {
-    background-color: #005fa3;
+    background-color: #032d4b;
 }
