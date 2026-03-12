@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Simple Todo</title>
+  <style>
+    :root{font-family:system-ui,Segoe UI,Roboto,sans-serif;color:#222}
+    body{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f6f7fb;margin:0;padding:20px}
+    .app{width:100%;max-width:560px;background:#fff;padding:20px;border-radius:8px;box-shadow:0 6px 18px rgba(20,30,60,.08)}
+    h1{margin:0 0 12px;font-size:20px}
+    .new-todo{display:flex;gap:8px}
+    .new-todo input{flex:1;padding:10px;border:1px solid #dfe6f0;border-radius:6px;font-size:14px}
+    .new-todo button{padding:10px 14px;border:0;background:#2563eb;color:#fff;border-radius:6px;cursor:pointer}
+    .controls{display:flex;align-items:center;justify-content:space-between;margin:12px 0 8px;font-size:13px;color:#6b7280}
+    .filters button{background:transparent;border:0;padding:6px 8px;border-radius:6px;cursor:pointer}
+    .filters button.active{background:#eef2ff;color:#303f9f}
+    ul.todos{list-style:none;padding:0;margin:0;border-top:1px solid #f0f2f6}
+    li.todo{display:flex;align-items:center;gap:10px;padding:12px;border-bottom:1px solid #f3f5f8}
+    li.todo .text{flex:1}
+    li.todo.completed .text{text-decoration:line-through;color:#9aa2b2}
+    .actions button{background:transparent;border:0;color:#9aa2b2;cursor:pointer;padding:6px;border-radius:6px}
+    .edit-input{width:100%;padding:8px;border:1px solid #dfe6f0;border-radius:6px;font-size:14px}
+    .empty{padding:18px;color:#6b7280;text-align:center}
+    .count{font-size:13px;color:#6b7280}
+  </style>
+</head>
+<body>
+  <main class="app" aria-label="Todo App">
+    <h1>Todo</h1>
+
+    <div class="new-todo">
+      <input id="newTodo" placeholder="What needs to be done?" autocomplete="off" />
+      <button id="addBtn">Add</button>
+    </div>
+
+    <div class="controls">
+      <div class="count" id="count">0 items</div>
+      <div class="filters" role="tablist" aria-label="Filters">
+        <button data-filter="all" class="active">All</button>
+        <button data-filter="active">Active</button>
+        <button data-filter="completed">Completed</button>
+      </div>
+    </div>
+
+    <ul id="todoList" class="todos" aria-live="polite"></ul>
+
+    <div style="display:flex;justify-content:space-between;margin-top:12px">
+      <button id="clearCompleted" style="background:#f8fafc;border:1px solid #e6eef8;padding:8px;border-radius:6px;cursor:pointer">Clear completed</button>
+      <div style="color:#6b7280;font-size:13px">Double-click an item to edit</div>
+    </div>
+  </main>
+
+  <script>
+    (function(){
+      const KEY = 'simple_todos_v1';
+      const el = {
+        input: document.getElementById('newTodo'),
+        addBtn: document.getElementById('addBtn'),
+        list: document.getElementById('todoList'),
+        count: document.getElementById('count'),
+        filters: document.querySelectorAll('.filters button'),
+        clearCompleted: document.getElementById('clearCompleted')
+      };
+
+      let todos = JSON.parse(localStorage.getItem(KEY) || '[]');
+      let filter = 'all';
+
+      function save(){ localStorage.setItem(KEY, JSON.stringify(todos)); }
+      function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+
+      function render(){
+        el.list.innerHTML = '';
+        const visible = todos.filter(t => {
+          if(filter === 'active') return !t.done;
+          if(filter === 'completed') return t.done;
+          return true;
+        });
+        if(!visible.length){
+          el.list.innerHTML = '<li class="empty">Nothing here — add a todo.</li>';
+        } else {
+          for(const t of visible){
+            const li = document.createElement('li');
+            li.className = 'todo' + (t.done ? ' completed' : '');
+            li.dataset.id = t.id;
+            li.innerHTML = `
+              <input type="checkbox" ${t.done ? 'checked' : ''} aria-label="Mark done" />
+              <div class="text" tabindex="0"></div>
+              <div class="actions">
+                <button class="edit" title="Edit">✎</button>
+                <button class="delete" title="Delete">🗑️</button>
+              </div>
+            `;
+            li.querySelector('.text').textContent = t.text;
+            addItemListeners(li, t);
+            el.list.appendChild(li);
+          }
+        }
+        el.count.textContent = (todos.filter(t=>!t.done).length) + ' items';
+      }
+
+      function addItemListeners(li, todo){
+        const cb = li.querySelector('input[type=checkbox]');
+        const txt = li.querySelector('.text');
+        const editBtn = li.querySelector('.edit');
+        const delBtn = li.querySelector('.delete');
+
+        cb.addEventListener('change', () => {
+          todo.done = cb.checked;
+          save();
+          render();
+        });
+
+        delBtn.addEventListener('click', () => {
+          todos = todos.filter(t => t.id !== todo.id);
+          save();
+          render();
+        });
+
+        editBtn.addEventListener('click', () => startEdit(li, todo));
+        txt.addEventListener('dblclick', () => startEdit(li, todo));
+        txt.addEventListener('keydown', (e) => {
+          if(e.key === 'Enter') startEdit(li, todo);
+        });
+      }
+
+      function startEdit(li, todo){
+        const textDiv = li.querySelector('.text');
+        const input = document.createElement('input');
+        input.className = 'edit-input';
+        input.value = todo.text;
+        li.replaceChild(input, textDiv);
+        input.focus();
+        input.select();
+
+        function done(saveText){
+          if(saveText){
+            const val = input.value.trim();
+            if(val) todo.text = val;
+            else {
+              // if emptied, remove item
+              todos = todos.filter(t => t.id !== todo.id);
+            }
+            save();
+          }
+          render();
+        }
+
+        input.addEventListener('blur', () => done(true));
+        input.addEventListener('keydown', (e) => {
+          if(e.key === 'Enter') done(true);
+          if(e.key === 'Escape') done(false);
+        });
+      }
+
+      function addTodo(text){
+        const trimmed = text.trim();
+        if(!trimmed) return;
+        todos.unshift({ id: uid(), text: trimmed, done: false });
+        save();
+        render();
+      }
+
+      el.addBtn.addEventListener('click', ()=>{ addTodo(el.input.value); el.input.value=''; el.input.focus(); });
+      el.input.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ addTodo(el.input.value); el.input.value=''; } });
+
+      el.filters.forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          el.filters.forEach(b=>b.classList.remove('active'));
+          btn.classList.add('active');
+          filter = btn.dataset.filter;
+          render();
+        });
+      });
+
+      el.clearCompleted.addEventListener('click', ()=>{
+        todos = todos.filter(t=>!t.done);
+        save();
+        render();
+      });
+
+      // initial render
+      render();
+    })();
+  </script>
+</body>
+</html>
