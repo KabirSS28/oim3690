@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Share Your Opinion</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .container{max-width:700px;margin:40px auto;padding:20px;border:1px solid #ddd;border-radius:8px;font-family:Segoe UI,Arial,sans-serif}
+    textarea{width:100%;height:120px;padding:10px;font-size:1rem;box-sizing:border-box}
+    button{padding:10px 16px;font-size:1rem;margin-top:8px}
+    .opinions{margin-top:20px}
+    .opinion{padding:10px;border-bottom:1px solid #eee;white-space:pre-wrap}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Share your opinion</h1>
+    <form id="opinionForm">
+      <label for="opinion" class="sr-only">Your opinion</label>
+      <textarea id="opinion" placeholder="Write your opinion..." required></textarea>
+      <br>
+      <button type="submit">Submit</button>
+      <button type="button" id="clear">Clear saved</button>
+    </form>
+
+    <div class="opinions" id="opinionsList" aria-live="polite"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('opinionForm');
+    const ta = document.getElementById('opinion');
+    const list = document.getElementById('opinionsList');
+    const clearBtn = document.getElementById('clear');
+
+    function escapeHtml(s){
+      return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]));
+    }
+
+    function load(){
+      const items = JSON.parse(localStorage.getItem('opinions') || '[]');
+      list.innerHTML = items.map(o => `<div class="opinion">${escapeHtml(o)}</div>`).join('');
+    }
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const v = ta.value.trim();
+      if (!v) return;
+      const items = JSON.parse(localStorage.getItem('opinions') || '[]');
+      items.unshift(v);
+      localStorage.setItem('opinions', JSON.stringify(items.slice(0,50)));
+      ta.value = '';
+      load();
+    });
+
+    clearBtn.addEventListener('click', () => { localStorage.removeItem('opinions'); load(); });
+
+    load();
+  </script>
+</body>
+</html>

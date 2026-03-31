@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <hi1>Hello, World!</h1>
+
+    <input id="name", type="text"/>
+    <button>greet</button>
+
+    <P></P>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script>
+        (function(){
+            function triggerConfetti(){
+                if (typeof confetti !== 'function') return;
+                confetti({
+                    particleCount: 120,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+                // a small follow-up burst
+                setTimeout(() => confetti({ particleCount: 60, spread: 100, origin: { y: 0.75 } }), 250);
+            }
+
+            // Try common selectors for the greet button
+            const btn = document.getElementById('greet') || document.querySelector('button[name="greet"]') || document.querySelector('button.greet') || document.querySelector('button');
+            if (btn){
+                btn.addEventListener('click', triggerConfetti);
+            }
+        })();
+    </script>
+</body>
+</html>
