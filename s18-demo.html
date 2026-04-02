@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sum</title>
+</head>
+<body>
+    <input type="number" id="x" step="any" />
+    <input type="number" id="y" step="any" />
+    <button id="calc">Calculate</button>
+    <p id="result"></p>
+
+    <script>
+        const xInput = document.getElementById('x');
+        const yInput = document.getElementById('y');
+        const btn = document.getElementById('calc');
+        const result = document.getElementById('result');
+
+        btn.addEventListener('click', () => {
+            const x = parseFloat(xInput.value);
+            const y = parseFloat(yInput.value);
+            if (Number.isNaN(x) || Number.isNaN(y)) {
+                result.textContent = 'Please enter valid numbers!';
+            } else {
+                result.textContent = `The sum of ${x} and ${y} is ${x + y}.`;
+            }
+        });
+    </script>
+</body>
+</html>
