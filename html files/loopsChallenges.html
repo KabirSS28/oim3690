@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Loop Challenges</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      padding: 30px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .section {
+      background: #1e293b;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 10px;
+    }
+
+    ul {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Loop Challenges</h1>
+
+  <!-- List -->
+  <div class="section">
+    <h2>1. Numbers List</h2>
+    <ul id="numberList"></ul>
+  </div>
+
+  <!-- Sum -->
+  <div class="section">
+    <h2>2. Sum</h2>
+    <p id="sumResult"></p>
+  </div>
+
+  <!-- Max -->
+  <div class="section">
+    <h2>3. Largest Number</h2>
+    <p id="maxResult"></p>
+  </div>
+
+  <!-- Count positives -->
+  <div class="section">
+    <h2>4. Count of Positive Numbers</h2>
+    <p id="positiveCount"></p>
+  </div>
+
+  <!-- Even numbers -->
+  <div class="section">
+    <h2>5. Even Numbers</h2>
+    <p id="evenNumbers"></p>
+  </div>
+
+  <script>
+    const numbers = [4, -8, 15, -16, 23, 42, -3];
+
+    // 1. Build list
+    const ul = document.getElementById("numberList");
+
+    for (let i = 0; i < numbers.length; i++) {
+      let li = document.createElement("li");
+      li.textContent = numbers[i];
+      ul.appendChild(li);
+    }
+
+    // 2. Sum it up
+    let sum = 0;
+
+    for (let i = 0; i < numbers.length; i++) {
+      sum += numbers[i];
+    }
+
+    document.getElementById("sumResult").textContent = "Total: " + sum;
+
+    // 3. Find max (NO Math.max)
+    let max = numbers[0];
+
+    for (let i = 1; i < numbers.length; i++) {
+      if (numbers[i] > max) {
+        max = numbers[i];
+      }
+    }
+
+    document.getElementById("maxResult").textContent = "Largest number: " + max;
+
+    // 4. Count positives
+    let positiveCount = 0;
+
+    for (let i = 0; i < numbers.length; i++) {
+      if (numbers[i] > 0) {
+        positiveCount++;
+      }
+    }
+
+    document.getElementById("positiveCount").textContent =
+      "Positive numbers: " + positiveCount;
+
+    // 5. Find evens
+    let evens = [];
+
+    for (let i = 0; i < numbers.length; i++) {
+      if (numbers[i] % 2 === 0) {
+        evens.push(numbers[i]);
+      }
+    }
+
+    document.getElementById("evenNumbers").textContent =
+      "Even numbers: " + evens.join(", ");
+  </script>
+
+</body>
+</html>
