@@ -39,6 +39,7 @@
       <button id="btn-red">Red Filter</button>
       <button id="btn-gray">Grayscale</button>
       <button id="btn-negative">Negative</button>
+      <button id="btn-blur">Blur</button>
     </div>
     <h2 id="rgb-info"></h2>
 
@@ -118,6 +119,20 @@
         }
         filteredCtx.putImageData(imgData, 0, 0);
       }
+
+
+    function blur () {
+        const imgData = getFilteredImageData();
+        for (let i = 0; i < imgData.data.length; i += 4) {
+          // average the colors of the surrounding 15 pixels
+        
+        }
+        filteredCtx.putImageData(imgData, 0, 0);
+      }
+
+
+
+
 
       // Attach buttons
       document.getElementById("btn-red").addEventListener("click", redFilter);
